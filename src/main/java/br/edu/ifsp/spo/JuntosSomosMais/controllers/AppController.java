@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Sort;
 
-import br.edu.ifsp.spo.JuntosSomosMais.JsonMapper;
 import br.edu.ifsp.spo.JuntosSomosMais.entities.Customer;
+import br.edu.ifsp.spo.JuntosSomosMais.mappers.CsvMapper;
+import br.edu.ifsp.spo.JuntosSomosMais.mappers.JsonMapper;
 import br.edu.ifsp.spo.JuntosSomosMais.services.CustomerService;
 import br.edu.ifsp.spo.JuntosSomosMais.utils.FileUtil;
 
@@ -26,6 +27,9 @@ public class AppController {
 
     @Autowired
     private JsonMapper jsonMapper;
+
+    @Autowired
+    private CsvMapper csvMapper;
 
     @Autowired
     private CustomerService customerService;
@@ -44,6 +48,15 @@ public class AppController {
         customerService.saveAll(customers);
         
         return ResponseEntity.ok("Json data saved");
+    }
+
+    @GetMapping("save/csv")
+    public ResponseEntity<String> saveDataCsv() {
+        String csvContent = fileUtil.readFile("data.csv");
+        List<Customer> customers = csvMapper.map(csvContent);
+        customerService.saveAll(customers);
+        
+        return ResponseEntity.ok("CSV data saved");
     }
 
     @GetMapping("customers")

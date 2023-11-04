@@ -1,4 +1,4 @@
-package br.edu.ifsp.spo.JuntosSomosMais;
+package br.edu.ifsp.spo.JuntosSomosMais.mappers;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
