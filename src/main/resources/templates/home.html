@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Juntos Somos Mais</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <h1>Juntos Somos Mais</h1>
+    <h2>Customers</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Location</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="customer : ${customers.content}">
+            <td th:text="${customer.id}"></td>
+            <td><img th:src="${customer.picture.medium}"></td>
+            <td th:text="${customer.name.first}+${customer.name.last}"></td>
+            <td th:text="${customer.email}"></td>
+            <td th:text="${customer.location.street}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{http://localhost:8080/home?page=1}">1</a>
+    <a th:href="@{http://localhost:8080/home?page=2}">2</a>
+    <a th:href="@{http://localhost:8080/home?page=3}">3</a>
+    <a th:href="@{http://localhost:8080/home?page=4}">4</a>
+    <a th:href="@{http://localhost:8080/home?page=5}">5</a>
+    <a th:href="@{http://localhost:8080/home?page=6}">6</a>
+    <a th:href="@{http://localhost:8080/home?page=7}">7</a>
+    <a th:href="@{http://localhost:8080/home?page=8}">8</a>
+    <a th:href="@{http://localhost:8080/home?page=9}">9</a>
+    <a th:href="@{http://localhost:8080/home?page=10}">10</a>
+</body>
+</html>
