@@ -23,12 +23,16 @@ import br.edu.ifsp.spo.JuntosSomosMais.enums.GenderEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.enums.RegionEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.enums.StateEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.services.CustomerService;
+import br.edu.ifsp.spo.JuntosSomosMais.utils.PhoneUtil;
 
 @Service
 public class JsonMapper {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private PhoneUtil phoneUtil;
     
     public List<Customer> map(String jsonContent) {
         JSONArray jsonArray = new JSONArray(jsonContent);
@@ -81,18 +85,6 @@ public class JsonMapper {
                 .last(nameJsonObject.getString("last"))
                 .build();
 
-            Set<MobileNumber> mobileNumbers = Collections.singleton(
-                MobileNumber.builder()
-                    .number(customerJsonObject.getString("cell"))
-                    .build()
-            );
-
-            Set<TelephoneNumber> telephoneNumbers = Collections.singleton(
-                TelephoneNumber.builder()
-                    .number(customerJsonObject.getString("phone"))
-                    .build()
-            );
-
             Picture picture = Picture.builder()
                 .large(pictureJsonObject.getString("large"))
                 .medium(pictureJsonObject.getString("medium"))
@@ -115,11 +107,26 @@ public class JsonMapper {
                 )
                 .name(name)
                 .location(location)
-                .telephoneNumbers(telephoneNumbers)
-                .mobileNumbers(mobileNumbers)
                 .picture(picture)
                 .nacionality("BR")
                 .build();
+
+            Set<MobileNumber> mobileNumbers = Collections.singleton(
+                MobileNumber.builder()
+                    .number(phoneUtil.toE164(customerJsonObject.getString("cell")))
+                    .customer(customer)
+                    .build()
+            );
+
+            Set<TelephoneNumber> telephoneNumbers = Collections.singleton(
+                TelephoneNumber.builder()
+                    .number(phoneUtil.toE164(customerJsonObject.getString("phone")))
+                    .customer(customer)
+                    .build()
+            );
+
+            customer.setMobileNumbers(mobileNumbers);
+            customer.setTelephoneNumbers(telephoneNumbers);
 
             customers.add(customer);
         });

@@ -25,12 +25,16 @@ import br.edu.ifsp.spo.JuntosSomosMais.enums.GenderEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.enums.RegionEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.enums.StateEnum;
 import br.edu.ifsp.spo.JuntosSomosMais.services.CustomerService;
+import br.edu.ifsp.spo.JuntosSomosMais.utils.PhoneUtil;
 
 @Service
 public class CsvMapper {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private PhoneUtil phoneUtil;
     
     public List<Customer> map(String csvContent) {
         List<Customer> customers = new ArrayList<>();
@@ -68,18 +72,6 @@ public class CsvMapper {
                     .last(record.get("name__last"))
                     .build();
 
-                Set<MobileNumber> mobileNumbers = Collections.singleton(
-                    MobileNumber.builder()
-                        .number(record.get("cell"))
-                        .build()
-                );
-
-                Set<TelephoneNumber> telephoneNumbers = Collections.singleton(
-                    TelephoneNumber.builder()
-                        .number(record.get("phone"))
-                        .build()
-                );
-
                 Picture picture = Picture.builder()
                     .large(record.get("picture__large"))
                     .medium(record.get("picture__medium"))
@@ -94,13 +86,28 @@ public class CsvMapper {
                     .registered(LocalDate.parse(record.get("registered__date").substring(0, 10)))
                     .name(name)
                     .location(location)
-                    .telephoneNumbers(telephoneNumbers)
-                    .mobileNumbers(mobileNumbers)
                     .picture(picture)
                     .nacionality("BR")
                     .build();
 
-                    customers.add(customer);
+                Set<MobileNumber> mobileNumbers = Collections.singleton(
+                    MobileNumber.builder()
+                        .number(phoneUtil.toE164(record.get("cell")))
+                        .customer(customer)
+                        .build()
+                );
+
+                Set<TelephoneNumber> telephoneNumbers = Collections.singleton(
+                    TelephoneNumber.builder()
+                        .number(phoneUtil.toE164(record.get("phone")))
+                        .customer(customer)
+                        .build()
+                );
+
+                customer.setMobileNumbers(mobileNumbers);
+                customer.setTelephoneNumbers(telephoneNumbers);
+
+                customers.add(customer);
             }
             
             return customers;
